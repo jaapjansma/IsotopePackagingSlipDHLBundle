@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="https://static.dhlparcel.nl/components/servicepoint-locator-component@latest/servicepoint-locator-component.js"></script>
+<link href="https://static.dhlparcel.nl/fonts/Delivery.css" rel="stylesheet" />
+</head>
+<body>
+
+<div id="locator">
+</div>
+<button id="iso_checkout_dhlpickup_button" onclick="closeParcelShopSelector();" class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-fullWidth"><?php echo $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_clode']; ?></button>
+<script type="text/javascript">
+console.log(window.parent);
+var locator;
+
+function onSelect(servicepoint) {
+  var eventData = {
+    servicepoint: servicepoint,
+    type: 'servicepoint_selected',
+  }
+  window.parent.postMessage(eventData, "*");
+}
+
+function closeParcelShopSelector() {
+  var eventData = {
+    type: 'close',
+  }
+  window.parent.postMessage(eventData, "*");
+}
+
+if (!locator) {
+  locator = new dhl.servicepoint.Locator(document.getElementById("locator"), {
+    <?php if ($this->googleMapsApiKey) { ?>
+    googleMapsApiKey: '<?php echo $this->googleMapsApiKey; ?>',
+    <?php } ?>
+    language: 'nl',
+    country: 'nl',
+    header: true,
+    onSelect: onSelect,
+    resizable: true,
+    env: window.location.hostname.indexOf('static-accept.dhlparcel.') > -1 ? 'accept' : undefined
+  });
+}
+</script>
+</body>
+</html>

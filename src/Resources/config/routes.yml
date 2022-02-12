@@ -1,0 +1,3 @@
+isotope-packaging-slip-dhl-bundle.controller:
+  resource: '@IsotopePackagingSlipDHLBundle/Controller'
+  type: annotation

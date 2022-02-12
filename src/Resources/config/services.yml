@@ -1,0 +1,25 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  krabo.isotope-packaging-slip-dhl.factory:
+    class: Krabo\IsotopePackagingSlipDHLBundle\Factory\DHLFactory
+    arguments: ['%krabo.isotope-packaging-slip-dhl.user_id%', '%krabo.isotope-packaging-slip-dhl.key%', '%krabo.isotope-packaging-slip-dhl.account_id%']
+    calls:
+      - setShipperCompanyName: ['%krabo.isotope-packaging-slip-dhl.shipper_company_name%']
+      - setShipperStreet: ['%krabo.isotope-packaging-slip-dhl.shipper_street%']
+      - setShipperHouseNumber: ['%krabo.isotope-packaging-slip-dhl.shipper_housenumber%']
+      - setShipperAdditionalAddressLine: ['%krabo.isotope-packaging-slip-dhl.shipper_additional_address_line%']
+      - setShipperPostalCode: ['%krabo.isotope-packaging-slip-dhl.shipper_postal_code%']
+      - setShipperCity: ['%krabo.isotope-packaging-slip-dhl.shipper_city%']
+      - setShipperCountryCode: ['%krabo.isotope-packaging-slip-dhl.shipper_country_code%']
+      - setHsCode: ['%krabo.isotope-packaging-slip-dhl.hscode%']
+    public: true
+
+  Krabo\IsotopePackagingSlipDHLBundle\Factory\DHLConnectionFactoryInterface: '@krabo.isotope-packaging-slip-dhl.factory'
+  Krabo\IsotopePackagingSlipDHLBundle\Factory\DHLSenderFactoryInterface: '@krabo.isotope-packaging-slip-dhl.factory'
+  Krabo\IsotopePackagingSlipDHLBundle\EventListener\PackagingSlipListener: ~
+  Krabo\IsotopePackagingSlipDHLBundle\Controller\DHLParcelShopController:
+    tags: [controller.service_arguments]
+    public: true
