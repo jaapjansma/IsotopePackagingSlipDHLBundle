@@ -18,9 +18,15 @@
 
 namespace Krabo\IsotopePackagingSlipDHLBundle\Factory;
 
+use Krabo\IsotopePackagingSlipBundle\Model\IsotopePackagingSlipModel;
 use Krabo\IsotopePackagingSlipBundle\Model\PackagingSlipModel;
+use Krabo\IsotopePackagingSlipDHLBundle\DHL\Resources\Parcel;
 use Mvdnbrk\DhlParcel\Client;
+use Mvdnbrk\DhlParcel\Endpoints\Shipments;
+use Mvdnbrk\DhlParcel\Endpoints\TrackTrace;
+use Mvdnbrk\DhlParcel\Exceptions\DhlParcelException;
 use Mvdnbrk\DhlParcel\Resources\Recipient;
+use Mvdnbrk\DhlParcel\Resources\Shipment;
 
 class DHLFactory implements DHLConnectionFactoryInterface, DHLSenderFactoryInterface {
 
@@ -169,6 +175,94 @@ class DHLFactory implements DHLConnectionFactoryInterface, DHLSenderFactoryInter
       $this->client->initializeEndpoints();
     }
     return $this->client;
+  }
+
+  /**
+   * Creates a parcel in DHL for this Packaging Slip
+   *
+   * @param \Krabo\IsotopePackagingSlipBundle\Model\IsotopePackagingSlipModel $isotopePackagingSlipModel
+   *
+   * @return void
+   */
+  public function checkParcelStatus(IsotopePackagingSlipModel $packagingSlip): void {
+    if ($packagingSlip->dhl_id) {
+      $trackTrace = new TrackTrace($this->getClient());
+      try {
+        $response = $trackTrace->get($packagingSlip->dhl_tracker_code);
+        if ($response->isDelivered) {
+          $packagingSlip->status = IsotopePackagingSlipModel::STATUS_DELIVERED;
+        }
+      } catch (DhlParcelException $ex) {
+        // Do nothing.
+      }
+    }
+    $packagingSlip->dhl_status_check_tstamp = time();
+    $packagingSlip->save();
+  }
+
+  /**
+   * Creates a parcel in DHL for this Packaging Slip
+   *
+   * @param \Krabo\IsotopePackagingSlipBundle\Model\IsotopePackagingSlipModel $isotopePackagingSlipModel
+   *
+   * @return void
+   */
+  public function createParcel(IsotopePackagingSlipModel $packagingSlip): void {
+    $weight = $packagingSlip->getTotalWeight();
+    $recipient = [
+      'first_name' => $packagingSlip->firstname,
+      'last_name' => $packagingSlip->lastname,
+      'street' => $packagingSlip->street_1,
+      'number' => $packagingSlip->housenumber,
+      'postal_code' => $packagingSlip->postal,
+      'city' => $packagingSlip->city,
+      'cc' => strtoupper($packagingSlip->country),
+    ];
+    if ($packagingSlip->street_2 || $packagingSlip->street_3) {
+      $recipient['additional_address_line'] = trim(implode(" ", [$packagingSlip->street_2, $packagingSlip->street_3]));
+    }
+    if ($packagingSlip->email) {
+      $recipient['email'] = $packagingSlip->email;
+    }
+    if ($packagingSlip->phone) {
+      $recipient['phoneNumber'] = $packagingSlip->phone;
+    }
+    $parcel = new Parcel([
+      'reference' => $packagingSlip->document_number,
+      'recipient' => $recipient,
+      'pieces' => [
+        [
+          'quantity' => 1,
+          'weight' => $weight,
+        ],
+      ],
+    ]);
+    if ($packagingSlip->dhl_servicepoint_id) {
+      $parcel->servicePoint($packagingSlip->dhl_servicepoint_id);
+    }
+    $parcel->sender = $this->getSender();
+    $shipments = new Shipments($this->getClient());
+    $shipment = $shipments->create($parcel);
+    $this->saveShipmentInfo($packagingSlip, $shipment);
+  }
+
+  /**
+   * Save a shipment
+   *
+   * @param \Krabo\IsotopePackagingSlipBundle\Model\IsotopePackagingSlipModel $packagingSlipModel
+   * @param \Mvdnbrk\DhlParcel\Resources\Shipment $shipment
+   *
+   * @return void
+   */
+  private function saveShipmentInfo(IsotopePackagingSlipModel $packagingSlipModel, Shipment $shipment) {
+    $db = \Contao\Database::getInstance();
+    $updateQuery = "UPDATE `".IsotopePackagingSlipModel::getTable()."` SET `dhl_id` = ?, `dhl_tracker_code` = ? WHERE `id` = ?";
+    $updateQueryParams = [
+      $shipment->id,
+      $shipment->barcode,
+      $packagingSlipModel->id
+    ];
+    $db->prepare($updateQuery)->execute($updateQueryParams);
   }
 
 

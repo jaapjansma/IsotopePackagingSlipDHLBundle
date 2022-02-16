@@ -18,6 +18,8 @@
 
 namespace Krabo\IsotopePackagingSlipDHLBundle\Factory;
 
+use Krabo\IsotopePackagingSlipBundle\Model\IsotopePackagingSlipModel;
+
 interface DHLConnectionFactoryInterface {
 
   /**
@@ -25,5 +27,14 @@ interface DHLConnectionFactoryInterface {
    * @return \Mvdnbrk\DhlParcel\Client
    */
   public function getClient(): \Mvdnbrk\DhlParcel\Client;
+
+  /**
+   * Creates a parcel in DHL for this Packaging Slip
+   *
+   * @param \Krabo\IsotopePackagingSlipBundle\Model\IsotopePackagingSlipModel $packagingSlip
+   *
+   * @return void
+   */
+  public function createParcel(IsotopePackagingSlipModel $packagingSlip): void;
 
 }

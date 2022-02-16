@@ -63,6 +63,10 @@ $GLOBALS['TL_DCA']['tl_isotope_packaging_slip']['fields']['dhl_servicepoint_id']
   'sql'                   => "varchar(255) NOT NULL default ''",
 ];
 
+$GLOBALS['TL_DCA']['tl_isotope_packaging_slip']['fields']['dhl_status_check_tstamp'] = [
+  'sql'                     => "int(10) unsigned NOT NULL default 0"
+];
+
 PaletteManipulator::create()
   ->addLegend('dhl_legend', 'notes', PaletteManipulator::POSITION_AFTER)
   ->addField('dhl_id', 'dhl_legend', PaletteManipulator::POSITION_APPEND)

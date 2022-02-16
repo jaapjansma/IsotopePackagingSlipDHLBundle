@@ -25,11 +25,7 @@ use Krabo\IsotopePackagingSlipBundle\Event\PackagingSlipOrderEvent;
 use Krabo\IsotopePackagingSlipBundle\Event\StatusChangedEvent;
 use Krabo\IsotopePackagingSlipBundle\Model\IsotopePackagingSlipModel;
 use Krabo\IsotopePackagingSlipDHLBundle\Factory\DHLConnectionFactoryInterface;
-use Krabo\IsotopePackagingSlipDHLBundle\Factory\DHLSenderFactoryInterface;
-use Mvdnbrk\DhlParcel\Endpoints\Shipments;
-use Krabo\IsotopePackagingSlipDHLBundle\DHL\Resources\Parcel;
 use Krabo\IsotopePackagingSlipDHLBundle\DHL\EndPoints\ServicePoints;
-use Mvdnbrk\DhlParcel\Resources\Shipment;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -42,18 +38,12 @@ class PackagingSlipListener implements EventSubscriberInterface {
   protected $dhlConnection;
 
   /**
-   * @var \Krabo\IsotopePackagingSlipDHLBundle\Factory\DHLSenderFactoryInterface
-   */
-  protected $senderFactory;
-
-  /**
    * @var \Symfony\Contracts\Cache\CacheInterface
    */
   protected $cache;
 
-  public function __construct(DHLConnectionFactoryInterface $dhlConnection, DHLSenderFactoryInterface $senderFactory, CacheInterface $cache) {
+  public function __construct(DHLConnectionFactoryInterface $dhlConnection, CacheInterface $cache) {
     $this->dhlConnection = $dhlConnection;
-    $this->senderFactory = $senderFactory;
     $this->cache = $cache;
   }
 
@@ -126,42 +116,7 @@ class PackagingSlipListener implements EventSubscriberInterface {
     $packagingSlip = $event->getPackagingSlip();
     $isReadyForDHL = $this->isPackagingSlipReadyForDHL($packagingSlip);
     if ($event->getNewStatus() == IsotopePackagingSlipModel::STATUS_PREPARE_FOR_SHIPPING && $isReadyForDHL) {
-      $weight = $packagingSlip->getTotalWeight();
-      $recipient = [
-        'first_name' => $packagingSlip->firstname,
-        'last_name' => $packagingSlip->lastname,
-        'street' => $packagingSlip->street_1,
-        'number' => $packagingSlip->housenumber,
-        'postal_code' => $packagingSlip->postal,
-        'city' => $packagingSlip->city,
-        'cc' => strtoupper($packagingSlip->country),
-      ];
-      if ($packagingSlip->street_2 || $packagingSlip->street_3) {
-        $recipient['additional_address_line'] = trim(implode(" ", [$packagingSlip->street_2, $packagingSlip->street_3]));
-      }
-      if ($packagingSlip->email) {
-        $recipient['email'] = $packagingSlip->email;
-      }
-      if ($packagingSlip->phone) {
-        $recipient['phoneNumber'] = $packagingSlip->phone;
-      }
-      $parcel = new Parcel([
-        'reference' => $packagingSlip->document_number,
-        'recipient' => $recipient,
-        'pieces' => [
-          [
-            'quantity' => 1,
-            'weight' => $weight,
-          ],
-        ],
-      ]);
-      if ($packagingSlip->dhl_servicepoint_id) {
-        $parcel->servicePoint($packagingSlip->dhl_servicepoint_id);
-      }
-      $parcel->sender = $this->senderFactory->getSender();
-      $shipments = new Shipments($this->dhlConnection->getClient());
-      $shipment = $shipments->create($parcel);
-      $this->saveShipmentInfo($packagingSlip, $shipment);
+      //$this->dhlConnection->createParcel($packagingSlip);
     }
   }
 
@@ -178,25 +133,6 @@ class PackagingSlipListener implements EventSubscriberInterface {
       return false;
     }
     return true;
-  }
-
-  /**
-   * Save a shipment
-   *
-   * @param \Krabo\IsotopePackagingSlipBundle\Model\IsotopePackagingSlipModel $packagingSlipModel
-   * @param \Mvdnbrk\DhlParcel\Resources\Shipment $shipment
-   *
-   * @return void
-   */
-  private function saveShipmentInfo(IsotopePackagingSlipModel $packagingSlipModel, Shipment $shipment) {
-    $db = \Contao\Database::getInstance();
-    $updateQuery = "UPDATE `".IsotopePackagingSlipModel::getTable()."` SET `dhl_id` = ?, `dhl_tracker_code` = ? WHERE `id` = ?";
-    $updateQueryParams = [
-      $shipment->id,
-      $shipment->barcode,
-      $packagingSlipModel->id
-    ];
-    $db->prepare($updateQuery)->execute($updateQueryParams);
   }
 
 
