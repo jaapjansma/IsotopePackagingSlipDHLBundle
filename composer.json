@@ -3,10 +3,10 @@
   "description":"Isotope Packaging Slip.",
   "type": "contao-bundle",
   "license":"AGPL-3.0-or-later",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "require": {
     "contao/core-bundle": "^4.9",
-    "krabo/isotope-packaging-slip-bundle": "^1.0.3",
+    "krabo/isotope-packaging-slip-bundle": "^1.0.4",
     "mvdnbrk/dhlparcel-php-api": "*"
   },
   "extra": {
