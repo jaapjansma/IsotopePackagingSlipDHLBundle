@@ -263,6 +263,8 @@ class DHLFactory implements DHLConnectionFactoryInterface, DHLSenderFactoryInter
       $packagingSlipModel->id
     ];
     $db->prepare($updateQuery)->execute($updateQueryParams);
+    $packagingSlipModel->dhl_id = $shipment->id;
+    $packagingSlipModel->barcode = $shipment->barcode;
   }
 
 
