@@ -40,4 +40,29 @@ class ProductCollectionListener {
     }
   }
 
+  /**
+   * Add the DHL Tracker Code
+   *
+   * @param \Isotope\Model\ProductCollection\Order $order
+   * @param $arrTokens
+   *
+   * @return mixed
+   */
+  public function getOrderNotificationTokens(ProductCollection\Order $order, &$arrTokens) {
+    $sql = "
+      SELECT `dhl_tracker_code`
+      FROM `tl_isotope_packaging_slip`
+      INNER JOIN `tl_isotope_packaging_slip_product_collection` ON `tl_isotope_packaging_slip_product_collection`.`pid` = `tl_isotope_packaging_slip`.`id`
+      WHERE `tl_isotope_packaging_slip_product_collection`.`document_number` = ?
+      AND `dhl_tracker_code` != ''
+      ORDER BY `tl_isotope_packaging_slip`.`tstamp` DESC
+      LIMIT 0, 1
+    ";
+    $result = \Database::getInstance()->prepare($sql)->execute($order->document_number);
+    if ($result) {
+      $arrTokens['dhl_tracker_code'] = $result->dhl_tracker_code;
+    }
+    return $arrTokens;
+  }
+
 }

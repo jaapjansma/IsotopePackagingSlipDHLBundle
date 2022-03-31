@@ -19,5 +19,6 @@
 $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup'] = 'DHL Parcel shop';
 $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_message'] = 'Pick up your order at a DHL Parcel shop';
 $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_select'] = 'Select a DHL Parcel Shop';
+$GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_change'] = 'Change a DHL Parcel Shop';
 $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_clode'] = 'Close';
 $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_info'] = 'Pick your order at a DHL Parcel Shop: €5,40 (Netherlands Only)';

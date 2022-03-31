@@ -19,8 +19,11 @@
 use \Krabo\IsotopePackagingSlipDHLBundle\EventListener\ProductCollectionListener;
 
 $GLOBALS['ISO_HOOKS']['createFromProductCollection'][] = [ProductCollectionListener::class, 'createFromProductCollection'];
+$GLOBALS['ISO_HOOKS']['getOrderNotificationTokens'][] = [ProductCollectionListener::class, 'getOrderNotificationTokens'];
 
 $GLOBALS['BE_MOD']['isotope']['tl_isotope_packaging_slip']['print_dhl_label'] = ['Krabo\IsotopePackagingSlipDHLBundle\Backend\Label', 'printLabel'];
 $GLOBALS['BE_MOD']['isotope']['tl_isotope_packaging_slip']['print_dhl_labels'] = ['Krabo\IsotopePackagingSlipDHLBundle\Backend\Label', 'printLabels'];
 
 \Isotope\Model\Shipping::registerModelType('isopackagingslip_dhl', 'Krabo\IsotopePackagingSlipDHLBundle\Model\Shipping\DHL');
+
+$GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['isotope']['iso_order_status_change']['email_text'][] = 'dhl_tracker_code';

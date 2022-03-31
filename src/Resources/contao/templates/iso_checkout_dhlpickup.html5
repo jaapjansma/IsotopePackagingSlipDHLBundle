@@ -22,15 +22,21 @@
 <span><?php echo $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_info']; ?></span>
 <?php if($this->message): ?><p><?php echo $this->message; ?></p><?php endif; ?>
 
-<div id="dhlpickup_info"></div>
-<input type="hidden" name="dhlpickup_servicepoint_id" id="dhlpickup_servicepoint_id" />
-<input type="hidden" name="dhlpickup_servicepoint_name" id="dhlpickup_servicepoint_name" />
-<input type="hidden" name="dhlpickup_servicepoint_street" id="dhlpickup_servicepoint_street" />
-<input type="hidden" name="dhlpickup_servicepoint_housenumber" id="dhlpickup_servicepoint_housenumber" />
-<input type="hidden" name="dhlpickup_servicepoint_postal" id="dhlpickup_servicepoint_postal" />
-<input type="hidden" name="dhlpickup_servicepoint_city" id="dhlpickup_servicepoint_city" />
+<div id="dhlpickup_info"><?php echo $this->dhlpickup_info; ?></div>
+<input type="hidden" name="dhlpickup_servicepoint_id" id="dhlpickup_servicepoint_id" value="<?php echo $this->dhl_servicepoint_id; ?>" />
+<input type="hidden" name="dhlpickup_servicepoint_name" id="dhlpickup_servicepoint_name" value="<?php echo $this->dhlpickup_servicepoint_name; ?>" />
+<input type="hidden" name="dhlpickup_servicepoint_street" id="dhlpickup_servicepoint_street" value="<?php echo $this->dhlpickup_servicepoint_street; ?>" />
+<input type="hidden" name="dhlpickup_servicepoint_housenumber" id="dhlpickup_servicepoint_housenumber" value="<?php echo $this->dhlpickup_servicepoint_housenumber; ?>" />
+<input type="hidden" name="dhlpickup_servicepoint_postal" id="dhlpickup_servicepoint_postal" value="<?php echo $this->dhlpickup_servicepoint_postal; ?>" />
+<input type="hidden" name="dhlpickup_servicepoint_city" id="dhlpickup_servicepoint_city" value="<?php echo $this->dhlpickup_servicepoint_city; ?>" />
 
-<button id="iso_checkout_dhlpickup_button" onclick="return false;" class="button"><?php echo $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_select']; ?></button>
+<button id="iso_checkout_dhlpickup_button" onclick="return false;" class="button">
+<?php if ($this->dhl_servicepoint_id): ?>
+<?php echo $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_change']; ?>
+<?php else: ?>
+<?php echo $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_select']; ?>
+<?php endif; ?>
+</button>
 
 <div id="dhl_service_point_locator_container" style="display: none;">
     <div id="dhl_service_point_locator"><iframe></iframe></div>
@@ -63,6 +69,11 @@ isotopepackagingslipdhl.servicePoints = (function () {
         document.getElementById('dhlpickup_servicepoint_postal').value = servicePointObject.address.postalCode;
         document.getElementById('dhlpickup_servicepoint_city').value = servicePointObject.address.city;
         document.getElementById(document.getElementById("iso_checkout_dhlpickup_button").parentElement.htmlFor).checked = true;
+        if (servicePointObject.id) {
+            document.getElementById("iso_checkout_dhlpickup_button").innerText = '<?php echo $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_change']; ?>';
+        } else {
+            document.getElementById("iso_checkout_dhlpickup_button").innerText = '<?php echo $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_select']; ?>';
+        }
     }
     $('#dhl_service_point_locator_container').hide();
   }

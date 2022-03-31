@@ -39,19 +39,31 @@ class DHLParcelShop {
     $this->pickupTemplate = new Template('iso_checkout_dhlpickup');
   }
 
-  public function getOptionsForDHLParcelShop($arrFields) {
+  public function getOptionsForDHLParcelShop($arrFields, $blnValidate) {
     $router = \System::getContainer()->get('router');
     $billingAddress = Isotope::getCart()->getBillingAddress();
+    $shippingAddress = Isotope::getCart()->getShippingAddress();
     $this->pickupTemplate->headline = $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup'];
     $this->pickupTemplate->message  = $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_message'];
     $this->pickupTemplate->selectParcelShopUrl = $router->generate('isotopepackagingslipdhl_selectparcelshop');
     $this->pickupTemplate->postal_code = $billingAddress->postal;
     $this->pickupTemplate->country = $billingAddress->country;
+    $this->pickupTemplate->dhl_servicepoint_id = $shippingAddress->dhl_servicepoint_id;
+    $this->pickupTemplate->dhlpickup_info = '';
+    if ($shippingAddress->dhl_servicepoint_id) {
+      $this->pickupTemplate->dhlpickup_info = $shippingAddress->company . '<br>' . $shippingAddress->street_1 . ' ' . $shippingAddress->housenumber . '<br>' . $shippingAddress->postal . '<br>' . $shippingAddress->city;
+      $this->pickupTemplate->dhlpickup_servicepoint_name = substr($shippingAddress->company, strlen($GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup'].' '));
+      $this->pickupTemplate->dhlpickup_servicepoint_street = $shippingAddress->street_1;
+      $this->pickupTemplate->dhlpickup_servicepoint_housenumber = $shippingAddress->housenumber;
+      $this->pickupTemplate->dhlpickup_servicepoint_postal = $shippingAddress->postal;
+      $this->pickupTemplate->dhlpickup_servicepoint_city = $shippingAddress->city;
+    }
+
 
     $arrOptions[] = [
       'value'     => 'dhlpickup-',
       'label'     => $this->pickupTemplate->parse(),
-      'default'   => false,
+      'default'   => $shippingAddress->dhl_servicepoint_id ? true : false,
     ];
     return $arrOptions;
   }
@@ -72,7 +84,10 @@ class DHLParcelShop {
         Isotope::getCart()->save();
       }
       return $objAddress;
+    } elseif (stripos($varValue, 'dhlpickup-') === 0 && Isotope::getCart()->getShippingAddress() && Isotope::getCart()->getShippingAddress()->dhl_servicepoint_id) {
+      return Isotope::getCart()->getShippingAddress();
     }
+    return null;
   }
 
 }
