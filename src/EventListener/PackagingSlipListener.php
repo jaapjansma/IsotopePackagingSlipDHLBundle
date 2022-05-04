@@ -89,8 +89,8 @@ class PackagingSlipListener implements EventSubscriberInterface {
         return $item;
       });
       $servicePoint = $cachedServicePoint->get();
-      $strAddress = $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup'] .'<br />'.$servicePoint->name;
-      $strAddress .= '<br>' . $event->getGeneratedAddress();
+      $strAddress = $event->getGeneratedAddress();
+      $strAddress = $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup'] . "<br>\n" . $servicePoint->name . "<br>\n" . $strAddress;
       $event->setGeneratedAddress($strAddress);
     }
   }
