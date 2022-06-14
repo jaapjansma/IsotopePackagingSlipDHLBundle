@@ -236,6 +236,9 @@ class DHLFactory implements DHLConnectionFactoryInterface, DHLSenderFactoryInter
           'weight' => $weight,
         ],
       ],
+      'options' => [
+        'description' => $packagingSlip->document_number,
+      ],
     ]);
     if ($packagingSlip->dhl_servicepoint_id) {
       $parcel->servicePoint($packagingSlip->dhl_servicepoint_id);
