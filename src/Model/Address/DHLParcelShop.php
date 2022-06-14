@@ -71,6 +71,10 @@ class DHLParcelShop {
   public function getAddressForOption($varValue, $blnValidate) {
     if (stripos($varValue, 'dhlpickup-') === 0 && \Input::post('dhlpickup_servicepoint_id')) {
       $objAddress = Address::createForProductCollection(Isotope::getCart(), Isotope::getConfig()->getShippingFields(), false, false);
+      $billingAddress = Isotope::getCart()->getBillingAddress();
+      $objAddress->salutation = $billingAddress->salutation;
+      $objAddress->firstname = $billingAddress->firstname;
+      $objAddress->lastname = $billingAddress->lastname;
       $objAddress->company = $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup'].' '. \Input::post('dhlpickup_servicepoint_name');
       $objAddress->street_1 = \Input::post('dhlpickup_servicepoint_street');
       $objAddress->housenumber = \Input::post('dhlpickup_servicepoint_housenumber');
