@@ -75,6 +75,8 @@ class DHLParcelShop {
       $objAddress->salutation = $billingAddress->salutation;
       $objAddress->firstname = $billingAddress->firstname;
       $objAddress->lastname = $billingAddress->lastname;
+      $objAddress->email = $billingAddress->email;
+      $objAddress->phone = $billingAddress->phone;
       $objAddress->company = $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup'].' '. \Input::post('dhlpickup_servicepoint_name');
       $objAddress->street_1 = \Input::post('dhlpickup_servicepoint_street');
       $objAddress->housenumber = \Input::post('dhlpickup_servicepoint_housenumber');
