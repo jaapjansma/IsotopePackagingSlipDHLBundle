@@ -25,7 +25,7 @@ use Krabo\IsotopePackagingSlipBundle\Model\IsotopePackagingSlipModel;
 use Krabo\IsotopePackagingSlipDHLBundle\Factory\DHLConnectionFactoryInterface;
 
 /**
- * @CronJob("hourly")
+ * @CronJob("minutely")
  */
 class UpdateParcelStatusCron {
 

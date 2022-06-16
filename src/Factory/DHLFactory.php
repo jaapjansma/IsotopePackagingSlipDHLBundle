@@ -23,7 +23,7 @@ use Krabo\IsotopePackagingSlipBundle\Model\PackagingSlipModel;
 use Krabo\IsotopePackagingSlipDHLBundle\DHL\Resources\Parcel;
 use Mvdnbrk\DhlParcel\Client;
 use Mvdnbrk\DhlParcel\Endpoints\Shipments;
-use Mvdnbrk\DhlParcel\Endpoints\TrackTrace;
+use Krabo\IsotopePackagingSlipDHLBundle\DHL\EndPoints\TrackTrace;
 use Mvdnbrk\DhlParcel\Exceptions\DhlParcelException;
 use Mvdnbrk\DhlParcel\Resources\Recipient;
 use Mvdnbrk\DhlParcel\Resources\Shipment;
