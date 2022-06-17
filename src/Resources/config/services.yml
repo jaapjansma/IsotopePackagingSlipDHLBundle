@@ -20,7 +20,6 @@ services:
   Krabo\IsotopePackagingSlipDHLBundle\Factory\DHLConnectionFactoryInterface: '@krabo.isotope-packaging-slip-dhl.factory'
   Krabo\IsotopePackagingSlipDHLBundle\Factory\DHLSenderFactoryInterface: '@krabo.isotope-packaging-slip-dhl.factory'
   Krabo\IsotopePackagingSlipDHLBundle\EventListener\PackagingSlipListener: ~
-  #Krabo\IsotopePackagingSlipDHLBundle\EventListener\AddressCheckoutListener: ~
   Krabo\IsotopePackagingSlipDHLBundle\Controller\DHLParcelShopController:
     tags: [controller.service_arguments]
     public: true
