@@ -20,35 +20,4 @@ namespace Krabo\IsotopePackagingSlipDHLBundle\DHL\Resources;
 
 class TrackTrace extends \Mvdnbrk\DhlParcel\Resources\TrackTrace {
 
-  /**
-   * @var string
-   */
-  public $barcode;
-
-  /**
-   * @var bool
-   */
-  public $isDelivered;
-
-  /**
-   * Create a new Track Trace Collection instance.
-   *
-   * @param  array  $attributes
-   * @return void
-   */
-  public function __construct(array $attributes = [])
-  {
-    parent::__construct($attributes);
-
-    $this->isDelivered = collect($attributes)->has('deliveredAt');
-    if (!$this->isDelivered) {
-      foreach($attributes['view']->phaseDisplay as $phase) {
-        if ($phase->phase == 'DELIVERED') {
-          $this->isDelivered = TRUE;
-          break;
-        }
-      }
-    }
-  }
-
 }
