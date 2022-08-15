@@ -22,3 +22,4 @@ $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_select'] = 'Selecteer een afhaal
 $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_change'] = 'Wijzig afhaal locatie';
 $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_clode'] = 'Sluiten';
 $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_info'] = 'Ophalen bij een DHL afhaalpunt bij jou in de buurt: €5,40 (Alleen in Nederland)';
+$GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_not_available'] = 'DHL Servicepoint niet beschikbaar';

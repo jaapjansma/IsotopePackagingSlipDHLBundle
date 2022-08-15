@@ -19,6 +19,7 @@
 namespace Krabo\IsotopePackagingSlipDHLBundle\EventListener;
 
 use Isotope\Model\Shipping;
+use Krabo\IsotopePackagingSlipBundle\Event\CheckAvailabilityEvent;
 use Krabo\IsotopePackagingSlipBundle\Event\Events;
 use Krabo\IsotopePackagingSlipBundle\Event\GenerateAddressEvent;
 use Krabo\IsotopePackagingSlipBundle\Event\PackagingSlipOrderEvent;
@@ -74,6 +75,7 @@ class PackagingSlipListener implements EventSubscriberInterface {
       Events::STATUS_CHANGED_EVENT => 'onStatusChanged',
       Events::PACKAGING_SLIP_CREATED_FROM_ORDER => 'onCreatedFromOrder',
       Events::GENERATE_ADDRESS => 'onGenerateAddress',
+      Events::CHECK_AVAILABILITY => 'onCheckAvailability',
     ];
   }
 
@@ -141,6 +143,18 @@ class PackagingSlipListener implements EventSubscriberInterface {
       return false;
     }
     return true;
+  }
+
+  public function onCheckAvailability(CheckAvailabilityEvent $event) {
+    $packagingSlip = IsotopePackagingSlipModel::findByPk($event->packagingSlipId);
+    if ($packagingSlip->dhl_servicepoint_id) {
+      $client = $this->dhlConnection->getClient();
+      $servicePoints = $client->servicePoints->get(['q' => $packagingSlip->dhl_servicepoint_id]);
+      if (!$servicePoints->count()) {
+        $event->isAvailable = '-1';
+        $event->notes .= $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_not_available'];
+      }
+    }
   }
 
 
