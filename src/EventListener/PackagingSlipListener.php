@@ -98,7 +98,15 @@ class PackagingSlipListener implements EventSubscriberInterface {
   public function onCreatedFromOrder(PackagingSlipOrderEvent $event) {
     if ($shippingAddress = $event->getOrder()->getShippingAddress()) {
       if ($shippingAddress->dhl_servicepoint_id) {
+        $order = $event->getOrder();
         $event->getPackagingSlip()->dhl_servicepoint_id = $shippingAddress->dhl_servicepoint_id;
+        $event->getPackagingSlip()->housenumber = $order->getBillingAddress()->housenumber;
+        $event->getPackagingSlip()->street_1 = $order->getBillingAddress()->street_1;
+        $event->getPackagingSlip()->street_2 = $order->getBillingAddress()->street_2;
+        $event->getPackagingSlip()->street_3 = $order->getBillingAddress()->street_3;
+        $event->getPackagingSlip()->postal = $order->getBillingAddress()->postal;
+        $event->getPackagingSlip()->city = $order->getBillingAddress()->city;
+
         $event->getPackagingSlip()->save();
       }
     }
