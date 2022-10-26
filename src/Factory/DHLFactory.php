@@ -227,6 +227,9 @@ class DHLFactory implements DHLConnectionFactoryInterface, DHLSenderFactoryInter
     if ($packagingSlip->phone) {
       $recipient['phoneNumber'] = $packagingSlip->phone;
     }
+    if ($packagingSlip->company) {
+      $recipient['company_name'] = $packagingSlip->company;
+    }
     $parcel = new Parcel([
       'reference' => $packagingSlip->document_number,
       'recipient' => $recipient,
