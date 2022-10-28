@@ -23,6 +23,7 @@ use Contao\Database;
 use Isotope\Model\Shipping;
 use Krabo\IsotopePackagingSlipBundle\Model\IsotopePackagingSlipModel;
 use Krabo\IsotopePackagingSlipDHLBundle\Factory\DHLConnectionFactoryInterface;
+use Mvdnbrk\DhlParcel\Exceptions\DhlParcelException;
 
 /**
  * @CronJob("minutely")
@@ -56,7 +57,11 @@ class CreateParcelCron {
       LIMIT 0, 25")->execute();
     while ($results->next()) {
       $packagingSlip = IsotopePackagingSlipModel::findByPk($results->id);
-      $this->connectionFactory->createParcel($packagingSlip);
+      try {
+        $this->connectionFactory->createParcel($packagingSlip);
+      } catch (DhlParcelException $e) {
+        // Do nothing
+      }
     }
   }
 
