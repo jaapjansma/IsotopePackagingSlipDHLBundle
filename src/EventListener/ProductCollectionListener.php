@@ -50,17 +50,18 @@ class ProductCollectionListener {
    */
   public function getOrderNotificationTokens(ProductCollection\Order $order, &$arrTokens) {
     $sql = "
-      SELECT `dhl_tracker_code`
+      SELECT `dhl_tracker_code`, `dhl_tracker_link`
       FROM `tl_isotope_packaging_slip`
       INNER JOIN `tl_isotope_packaging_slip_product_collection` ON `tl_isotope_packaging_slip_product_collection`.`pid` = `tl_isotope_packaging_slip`.`id`
       WHERE `tl_isotope_packaging_slip_product_collection`.`document_number` = ?
-      AND `dhl_tracker_code` != ''
+      AND (`dhl_tracker_code` != '' OR `dhl_tracker_link` != '')
       ORDER BY `tl_isotope_packaging_slip`.`tstamp` DESC
       LIMIT 0, 1
     ";
     $result = \Database::getInstance()->prepare($sql)->execute($order->document_number);
     if ($result) {
       $arrTokens['dhl_tracker_code'] = $result->dhl_tracker_code;
+      $arrTokens['dhl_tracker_link'] = $result->dhl_tracker_link;
     }
     return $arrTokens;
   }

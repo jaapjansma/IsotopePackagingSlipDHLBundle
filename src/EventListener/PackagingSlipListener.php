@@ -22,11 +22,13 @@ use Isotope\Model\Shipping;
 use Krabo\IsotopePackagingSlipBundle\Event\CheckAvailabilityEvent;
 use Krabo\IsotopePackagingSlipBundle\Event\Events;
 use Krabo\IsotopePackagingSlipBundle\Event\GenerateAddressEvent;
+use Krabo\IsotopePackagingSlipBundle\Event\GenerateTrackTraceTokenEvent;
 use Krabo\IsotopePackagingSlipBundle\Event\PackagingSlipOrderEvent;
 use Krabo\IsotopePackagingSlipBundle\Event\StatusChangedEvent;
 use Krabo\IsotopePackagingSlipBundle\Model\IsotopePackagingSlipModel;
 use Krabo\IsotopePackagingSlipDHLBundle\Factory\DHLConnectionFactoryInterface;
 use Krabo\IsotopePackagingSlipDHLBundle\DHL\EndPoints\ServicePoints;
+use Krabo\IsotopePackagingSlipDHLBundle\Factory\DHLFactory;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -76,7 +78,30 @@ class PackagingSlipListener implements EventSubscriberInterface {
       Events::PACKAGING_SLIP_CREATED_FROM_ORDER => 'onCreatedFromOrder',
       Events::GENERATE_ADDRESS => 'onGenerateAddress',
       Events::CHECK_AVAILABILITY => 'onCheckAvailability',
+      Events::GENERATE_TRACKTRACE_TOKEN => 'onGenerateTrackTraceToken',
     ];
+  }
+
+  public function onGenerateTrackTraceToken(GenerateTrackTraceTokenEvent $event) {
+    $sql = "
+      SELECT `dhl_tracker_code`, `dhl_tracker_link`
+      FROM `tl_isotope_packaging_slip`
+      WHERE `id` = ?
+      LIMIT 0, 1
+    ";
+    $result = \Database::getInstance()->prepare($sql)->execute($event->getPackagingSlip()->id);
+
+    if (!empty($result->dhl_tracker_code)) {
+      $link = $result->dhl_tracker_link;
+      if (empty($link)) {
+        $link = DHLFactory::TRACKTRACE_LINK . $result->dhl_tracker_code;
+      }
+      if (!empty($link)) {
+        $event->trackAndTrace = '<a href="'.$link.'">'.$result->dhl_tracker_code.'</a>';
+      } else {
+        $event->trackAndTrace = $result->dhl_tracker_code;
+      }
+    }
   }
 
   public function onGenerateAddress(GenerateAddressEvent $event) {

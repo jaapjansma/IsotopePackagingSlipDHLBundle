@@ -42,6 +42,17 @@ $GLOBALS['TL_DCA']['tl_isotope_packaging_slip']['list']['operations']['print_dhl
     return '';
   }
 ];
+$GLOBALS['TL_DCA']['tl_isotope_packaging_slip']['list']['operations']['dhl_tracktrace_label'] = [
+  'label'             => &$GLOBALS['TL_LANG']['tl_isotope_packaging_slip']['dhl_tracktrace_label'],
+  'href'              => 'key=print_dhl_label',
+  'icon'              => 'bundles/isotopepackagingslipdhl/dhltracktrace.png',
+  'button_callback'   => function($row, $href, $label, $title, $icon, $attributes) {
+    if (!empty($row['dhl_tracker_link'])) {
+      return '<a target="_dhltracktrace" href="' . $row['dhl_tracker_link'] . '" title="' . Contao\StringUtil::specialchars($title) . '"' . $attributes . '>' . Contao\Image::getHtml($icon, $label) . '</a> ';
+    }
+    return '';
+  }
+];
 
 $GLOBALS['TL_DCA']['tl_isotope_packaging_slip']['fields']['dhl_id'] = [
   'search'                  => true,
@@ -50,6 +61,12 @@ $GLOBALS['TL_DCA']['tl_isotope_packaging_slip']['fields']['dhl_id'] = [
   'sql'                     => "varchar(255) NOT NULL default ''"
 ];
 $GLOBALS['TL_DCA']['tl_isotope_packaging_slip']['fields']['dhl_tracker_code'] = [
+  'search'                  => true,
+  'inputType'               => 'text',
+  'eval'                    => array('mandatory'=>false, 'maxlength'=>255, 'tl_class'=>'w50'),
+  'sql'                     => "varchar(255) NOT NULL default ''"
+];
+$GLOBALS['TL_DCA']['tl_isotope_packaging_slip']['fields']['dhl_tracker_link'] = [
   'search'                  => true,
   'inputType'               => 'text',
   'eval'                    => array('mandatory'=>false, 'maxlength'=>255, 'tl_class'=>'w50'),
@@ -71,5 +88,6 @@ PaletteManipulator::create()
   ->addLegend('dhl_legend', 'notes', PaletteManipulator::POSITION_AFTER)
   ->addField('dhl_id', 'dhl_legend', PaletteManipulator::POSITION_APPEND)
   ->addField('dhl_tracker_code', 'dhl_legend', PaletteManipulator::POSITION_APPEND)
+  ->addField('dhl_tracker_link', 'dhl_legend', PaletteManipulator::POSITION_APPEND)
   ->addField('dhl_servicepoint_id', 'dhl_legend', PaletteManipulator::POSITION_APPEND)
   ->applyToPalette('default', 'tl_isotope_packaging_slip');

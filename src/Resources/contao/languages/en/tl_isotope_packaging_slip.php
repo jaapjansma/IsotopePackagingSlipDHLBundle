@@ -17,7 +17,9 @@
  */
 
 $GLOBALS['TL_LANG']['tl_isotope_packaging_slip']['dhl_legend'] = 'DHL';
-$GLOBALS['TL_LANG']['tl_isotope_packaging_slip']['dhl_tracker_code'] = ['DHL Trackingcode', ''];
+$GLOBALS['TL_LANG']['tl_isotope_packaging_slip']['dhl_tracker_code'] = ['DHL Tracking Code', ''];
+$GLOBALS['TL_LANG']['tl_isotope_packaging_slip']['dhl_tracker_link'] = ['DHL Tracking Link', ''];
 $GLOBALS['TL_LANG']['tl_isotope_packaging_slip']['dhl_id'] = ['DHL Zending ID', ''];
 $GLOBALS['TL_LANG']['tl_isotope_packaging_slip']['print_dhl_label'] = ['Print DHL Label', 'Print DHL Label'];
+$GLOBALS['TL_LANG']['tl_isotope_packaging_slip']['dhl_tracktrace_label'] = ['Track and Trace', 'Track and Trace'];
 $GLOBALS['TL_LANG']['tl_isotope_packaging_slip']['dhl_servicepoint_id'] = ['DHL Servicepoint ID', '<a href="https://static.dhlparcel.nl/components/servicepoint-locator-component%40latest/examples/fullscreen.html" target="_blank">Click here to find the Service Point ID</a>. Copy from the new screen and paste it in this field.'];

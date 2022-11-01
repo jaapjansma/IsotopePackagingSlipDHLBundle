@@ -21,6 +21,7 @@ namespace Krabo\IsotopePackagingSlipDHLBundle\Factory;
 use Krabo\IsotopePackagingSlipBundle\Model\IsotopePackagingSlipModel;
 use Krabo\IsotopePackagingSlipBundle\Model\PackagingSlipModel;
 use Krabo\IsotopePackagingSlipDHLBundle\DHL\Resources\Parcel;
+use Krabo\SnelstartBundle\Factory;
 use Mvdnbrk\DhlParcel\Client;
 use Mvdnbrk\DhlParcel\Endpoints\Shipments;
 use Krabo\IsotopePackagingSlipDHLBundle\DHL\EndPoints\TrackTrace;
@@ -41,6 +42,8 @@ class DHLFactory implements DHLConnectionFactoryInterface, DHLSenderFactoryInter
   protected Recipient $shipper;
 
   protected string $hsCode;
+
+  public const TRACKTRACE_LINK = "https://www.dhl.com/nl-nl/home/tracking/tracking-parcel.html?submit=1&tracking-id=";
 
   public function __construct(string $userId, string $apiKey, ?string $accountId=null) {
     $this->shipper = new Recipient();
@@ -262,10 +265,12 @@ class DHLFactory implements DHLConnectionFactoryInterface, DHLSenderFactoryInter
    */
   private function saveShipmentInfo(IsotopePackagingSlipModel $packagingSlipModel, Shipment $shipment) {
     $db = \Contao\Database::getInstance();
-    $updateQuery = "UPDATE `".IsotopePackagingSlipModel::getTable()."` SET `dhl_id` = ?, `dhl_tracker_code` = ? WHERE `id` = ?";
+    $trackAndTraceLink = self::TRACKTRACE_LINK.$shipment->barcode;
+    $updateQuery = "UPDATE `".IsotopePackagingSlipModel::getTable()."` SET `dhl_id` = ?, `dhl_tracker_code` = ?, `dhl_tracker_link` = ? WHERE `id` = ?";
     $updateQueryParams = [
       $shipment->id,
       $shipment->barcode,
+      $trackAndTraceLink,
       $packagingSlipModel->id
     ];
     $db->prepare($updateQuery)->execute($updateQueryParams);

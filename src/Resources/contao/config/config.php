@@ -27,3 +27,4 @@ $GLOBALS['BE_MOD']['isotope']['tl_isotope_packaging_slip']['print_dhl_labels'] =
 \Isotope\Model\Shipping::registerModelType('isopackagingslip_dhl', 'Krabo\IsotopePackagingSlipDHLBundle\Model\Shipping\DHL');
 
 $GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['isotope']['iso_order_status_change']['email_text'][] = 'dhl_tracker_code';
+$GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['isotope']['iso_order_status_change']['email_text'][] = 'dhl_tracker_link';
