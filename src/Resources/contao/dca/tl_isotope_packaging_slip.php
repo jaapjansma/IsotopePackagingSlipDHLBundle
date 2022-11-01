@@ -17,6 +17,7 @@
  */
 
 use \Contao\CoreBundle\DataContainer\PaletteManipulator;
+use Krabo\IsotopePackagingSlipDHLBundle\Factory\DHLFactory;
 
 $GLOBALS['TL_DCA']['tl_isotope_packaging_slip']['config']['onload_callback'][] = function(\Contao\DataContainer $dc) {
   if (Input::post('FORM_SUBMIT') == 'tl_select') {
@@ -49,6 +50,9 @@ $GLOBALS['TL_DCA']['tl_isotope_packaging_slip']['list']['operations']['dhl_track
   'button_callback'   => function($row, $href, $label, $title, $icon, $attributes) {
     if (!empty($row['dhl_tracker_link'])) {
       return '<a target="_dhltracktrace" href="' . $row['dhl_tracker_link'] . '" title="' . Contao\StringUtil::specialchars($title) . '"' . $attributes . '>' . Contao\Image::getHtml($icon, $label) . '</a> ';
+    } elseif (!empty($row['dhl_tracker_code'])) {
+      $dhl_tracker_link = DHLFactory::TRACKTRACE_LINK . $row['dhl_tracker_code'];
+      return '<a target="_dhltracktrace" href="' . $dhl_tracker_link . '" title="' . Contao\StringUtil::specialchars($title) . '"' . $attributes . '>' . Contao\Image::getHtml($icon, $label) . '</a> ';
     }
     return '';
   }
