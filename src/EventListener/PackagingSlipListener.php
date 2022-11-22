@@ -92,6 +92,7 @@ class PackagingSlipListener implements EventSubscriberInterface {
     $result = \Database::getInstance()->prepare($sql)->execute($event->getPackagingSlip()->id);
 
     if (!empty($result->dhl_tracker_code)) {
+      $event->trackAndTraceCode = $result->dhl_tracker_code;
       $link = $result->dhl_tracker_link;
       if (empty($link)) {
         $link = DHLFactory::TRACKTRACE_LINK . $result->dhl_tracker_code;
