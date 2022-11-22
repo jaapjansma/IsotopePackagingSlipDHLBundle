@@ -18,6 +18,7 @@
 
 namespace Krabo\IsotopePackagingSlipDHLBundle\Factory;
 
+use Haste\Util\Format;
 use Krabo\IsotopePackagingSlipBundle\Model\IsotopePackagingSlipModel;
 use Krabo\IsotopePackagingSlipBundle\Model\PackagingSlipModel;
 use Krabo\IsotopePackagingSlipDHLBundle\DHL\Resources\Parcel;
@@ -213,16 +214,16 @@ class DHLFactory implements DHLConnectionFactoryInterface, DHLSenderFactoryInter
   public function createParcel(IsotopePackagingSlipModel $packagingSlip): void {
     $weight = $packagingSlip->getTotalWeight();
     $recipient = [
-      'first_name' => $packagingSlip->firstname,
-      'last_name' => $packagingSlip->lastname,
-      'street' => $packagingSlip->street_1,
-      'number' => $packagingSlip->housenumber,
-      'postal_code' => $packagingSlip->postal,
-      'city' => $packagingSlip->city,
-      'cc' => strtoupper($packagingSlip->country),
+      'first_name' => Format::dcaValue(IsotopePackagingSlipModel::getTable(), 'firstname', $packagingSlip->firstname),
+      'last_name' => Format::dcaValue(IsotopePackagingSlipModel::getTable(), 'lastname', $packagingSlip->lastname),
+      'street' => Format::dcaValue(IsotopePackagingSlipModel::getTable(), 'street_1', $packagingSlip->street_1),
+      'number' => Format::dcaValue(IsotopePackagingSlipModel::getTable(), 'housenumber', $packagingSlip->housenumber),
+      'postal_code' => Format::dcaValue(IsotopePackagingSlipModel::getTable(), 'postal', $packagingSlip->postal),
+      'city' => Format::dcaValue(IsotopePackagingSlipModel::getTable(), 'city', $packagingSlip->city),
+      'cc' => Format::dcaValue(IsotopePackagingSlipModel::getTable(), 'country', strtoupper($packagingSlip->country)),
     ];
     if ($packagingSlip->street_2 || $packagingSlip->street_3) {
-      $recipient['additional_address_line'] = trim(implode(" ", [$packagingSlip->street_2, $packagingSlip->street_3]));
+      $recipient['additional_address_line'] = trim(implode(" ", [Format::dcaValue(IsotopePackagingSlipModel::getTable(), 'street_2', $packagingSlip->street_2), Format::dcaValue(IsotopePackagingSlipModel::getTable(), 'street_3', $packagingSlip->street_3)]));
     }
     if ($packagingSlip->email) {
       $recipient['email'] = $packagingSlip->email;
@@ -231,7 +232,7 @@ class DHLFactory implements DHLConnectionFactoryInterface, DHLSenderFactoryInter
       $recipient['phoneNumber'] = $packagingSlip->phone;
     }
     if ($packagingSlip->company && empty($packagingSlip->dhl_servicepoint_id)) {
-      $recipient['company_name'] = $packagingSlip->company;
+      $recipient['company_name'] = Format::dcaValue(IsotopePackagingSlipModel::getTable(), 'company', $packagingSlip->company);
     }
     $parcel = new Parcel([
       'reference' => $packagingSlip->document_number,
