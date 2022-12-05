@@ -29,6 +29,7 @@ use Krabo\IsotopePackagingSlipBundle\Model\IsotopePackagingSlipModel;
 use Krabo\IsotopePackagingSlipDHLBundle\Factory\DHLConnectionFactoryInterface;
 use Krabo\IsotopePackagingSlipDHLBundle\DHL\EndPoints\ServicePoints;
 use Krabo\IsotopePackagingSlipDHLBundle\Factory\DHLFactory;
+use Mvdnbrk\DhlParcel\Exceptions\DhlParcelException;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -111,15 +112,25 @@ class PackagingSlipListener implements EventSubscriberInterface {
       $cacheKey = 'isotopepackagingslipdhl_parcelshop_'.$servicePointId;
       $cachedServicePoint = $this->cache->get($cacheKey, function() use ($servicePointId) {
         $servicepointApi = new ServicePoints($this->dhlConnection->getClient());
-        $servicePoint = $servicepointApi->getById($servicePointId);
+        try {
+          $servicePoint = $servicepointApi->getById($servicePointId);
+        } catch (DhlParcelException $ex) {
+          $servicePoint = null;
+        }
         $item = new CacheItem();
         $item->set($servicePoint);
         return $item;
       });
       $servicePoint = $cachedServicePoint->get();
-      $strAddress = $event->getGeneratedAddress();
-      $strAddress = $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup'] . "<br>\n" . $servicePoint->name . "<br>\n" . $strAddress;
-      $event->setGeneratedAddress($strAddress);
+      if ($servicePoint) {
+        $strAddress = $event->getGeneratedAddress();
+        $strAddress = $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup'] . "<br>\n" . $servicePoint->name . "<br>\n" . $strAddress;
+        $event->setGeneratedAddress($strAddress);
+      } else {
+        $strAddress = $event->getGeneratedAddress();
+        $strAddress = $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_not_available'] . "<br>\n" . $strAddress;
+        $event->setGeneratedAddress($strAddress);
+      }
     }
   }
 
