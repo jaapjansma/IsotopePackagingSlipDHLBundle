@@ -99,7 +99,7 @@ class PackagingSlipListener implements EventSubscriberInterface {
         $link = DHLFactory::TRACKTRACE_LINK . $result->dhl_tracker_code;
       }
       if (!empty($link)) {
-        $event->trackAndTrace = '<a href="'.$link.'">'.$result->dhl_tracker_code.'</a>';
+        $event->trackAndTrace = '<a href="'.$link.'" target="_blank" rel="noopener">'.$result->dhl_tracker_code.'</a>';
       } else {
         $event->trackAndTrace = $result->dhl_tracker_code;
       }
