@@ -233,7 +233,7 @@ class DHLFactory implements DHLConnectionFactoryInterface, DHLSenderFactoryInter
       $recipient['phoneNumber'] = $packagingSlip->phone;
     }
     if ($packagingSlip->company && empty($packagingSlip->dhl_servicepoint_id)) {
-      $recipient['company_name'] = StringUtil::decodeEntities(Format::dcaValue(IsotopePackagingSlipModel::getTable(), 'company', $packagingSlip->company));
+      $recipient['last_name'] .= ' - ' . StringUtil::decodeEntities(Format::dcaValue(IsotopePackagingSlipModel::getTable(), 'company', $packagingSlip->company));
     }
     $parcel = new Parcel([
       'reference' => $packagingSlip->document_number,
