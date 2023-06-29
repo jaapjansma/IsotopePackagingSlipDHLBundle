@@ -26,6 +26,7 @@ use Krabo\IsotopePackagingSlipBundle\Event\GenerateTrackTraceTokenEvent;
 use Krabo\IsotopePackagingSlipBundle\Event\PackagingSlipOrderEvent;
 use Krabo\IsotopePackagingSlipBundle\Event\StatusChangedEvent;
 use Krabo\IsotopePackagingSlipBundle\Model\IsotopePackagingSlipModel;
+use Krabo\IsotopePackagingSlipBundle\Model\IsotopePackagingSlipShipperModel;
 use Krabo\IsotopePackagingSlipDHLBundle\Factory\DHLConnectionFactoryInterface;
 use Krabo\IsotopePackagingSlipDHLBundle\DHL\EndPoints\ServicePoints;
 use Krabo\IsotopePackagingSlipDHLBundle\Factory\DHLFactory;
@@ -183,7 +184,11 @@ class PackagingSlipListener implements EventSubscriberInterface {
     if (!in_array($shippingMethod->type, ['isopackagingslip_dhl'])) {
       return false;
     }
-    return true;
+    $shipper = IsotopePackagingSlipShipperModel::findByPk($packagingSlipModel->shipper_id);
+    if ($shipper && $shipper->auto_create_dhl_parcel) {
+      return TRUE;
+    }
+    return false;
   }
 
   public function onCheckAvailability(CheckAvailabilityEvent $event) {
