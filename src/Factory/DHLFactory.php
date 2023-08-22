@@ -18,12 +18,13 @@
 
 namespace Krabo\IsotopePackagingSlipDHLBundle\Factory;
 
+use Exception;
 use Contao\StringUtil;
 use Haste\Util\Format;
 use Krabo\IsotopePackagingSlipBundle\Model\IsotopePackagingSlipModel;
 use Krabo\IsotopePackagingSlipBundle\Model\PackagingSlipModel;
+use Krabo\IsotopePackagingSlipDHLBundle\DHL\EndPoints\ServicePoints;
 use Krabo\IsotopePackagingSlipDHLBundle\DHL\Resources\Parcel;
-use Krabo\SnelstartBundle\Factory;
 use Mvdnbrk\DhlParcel\Client;
 use Mvdnbrk\DhlParcel\Endpoints\Shipments;
 use Krabo\IsotopePackagingSlipDHLBundle\DHL\EndPoints\TrackTrace;
@@ -197,7 +198,7 @@ class DHLFactory implements DHLConnectionFactoryInterface, DHLSenderFactoryInter
         if ($response->isDelivered) {
           $packagingSlip->status = IsotopePackagingSlipModel::STATUS_DELIVERED;
         }
-      } catch (DhlParcelException $ex) {
+      } catch (Exception $ex) {
         // Do nothing.
       }
     }
@@ -234,6 +235,15 @@ class DHLFactory implements DHLConnectionFactoryInterface, DHLSenderFactoryInter
     }
     if ($packagingSlip->company && empty($packagingSlip->dhl_servicepoint_id)) {
       $recipient['last_name'] .= ' - ' . StringUtil::decodeEntities(Format::dcaValue(IsotopePackagingSlipModel::getTable(), 'company', $packagingSlip->company));
+    }
+    if (!empty($packagingSlip->dhl_servicepoint_id) && strtoupper($packagingSlip->country) == 'NL') {
+      $servicepointApi = new ServicePoints($this->getClient());
+      try {
+        $servicePoint = $servicepointApi->getById($packagingSlip->dhl_servicepoint_id);
+        $recipient['postal_code'] = $servicePoint->postal_code;
+      } catch (Exception $ex) {
+        // Do nothing
+      }
     }
     $parcel = new Parcel([
       'reference' => $packagingSlip->document_number,
