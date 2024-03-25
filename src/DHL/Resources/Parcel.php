@@ -34,7 +34,7 @@ class Parcel extends \Mvdnbrk\DhlParcel\Resources\Parcel {
    *
    * @return array
    */
-  public function toArray() {
+  public function toArray(): array {
     $return = parent::toArray();
     if ($this->customDeclaration) {
       $return['customsDeclaration'] = $this->customDeclaration->toArray();
