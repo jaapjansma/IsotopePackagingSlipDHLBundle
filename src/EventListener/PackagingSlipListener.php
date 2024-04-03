@@ -18,6 +18,8 @@
 
 namespace Krabo\IsotopePackagingSlipDHLBundle\EventListener;
 
+use Contao\Email;
+use Contao\System;
 use Isotope\Model\Shipping;
 use Krabo\IsotopePackagingSlipBundle\Event\CheckAvailabilityEvent;
 use Krabo\IsotopePackagingSlipBundle\Event\Events;
@@ -192,13 +194,20 @@ class PackagingSlipListener implements EventSubscriberInterface {
   }
 
   public function onCheckAvailability(CheckAvailabilityEvent $event) {
+    $emailConfigKey = 'krabo.isotope-packaging-slip-dhl.email_pickup_not_available';
     $packagingSlip = IsotopePackagingSlipModel::findByPk($event->packagingSlipId);
     if ($packagingSlip->dhl_servicepoint_id) {
       $client = $this->dhlConnection->getClient();
       $servicePoints = $client->servicePoints->get(['q' => $packagingSlip->dhl_servicepoint_id]);
       if (!$servicePoints->count()) {
-        $event->isAvailable = '-1';
-        $event->notes .= $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_not_available'];
+          $event->isAvailable = '-1';
+          $event->notes .= $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_not_available'];
+          if (System::getContainer()->hasParameter($emailConfigKey)) {
+              $email = new Email();
+              $email->subject = $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_not_available'] . '(' . $packagingSlip->getDocumentNumber() . ')';
+              $email->text = $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_not_available'] . '(Pakbon: ' . $packagingSlip->getDocumentNumber() . ')';
+              $email->sendTo(System::getContainer()->getParameter($emailConfigKey));
+          }
       }
     }
   }

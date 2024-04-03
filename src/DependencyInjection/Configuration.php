@@ -45,6 +45,7 @@ class Configuration implements ConfigurationInterface {
       ->scalarNode('shipper_country_code')->end()
       ->scalarNode('hscode')->end()
       ->scalarNode('google_maps_api_key')->end()
+      ->scalarNode('email_pickup_not_available')->end()
       ->end();
     return $treeBuilder;
   }

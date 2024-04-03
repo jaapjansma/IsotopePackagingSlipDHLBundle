@@ -51,6 +51,9 @@ class IsotopePackagingSlipDHLExtension extends Extension  {
     if (isset($config['google_maps_api_key'])) {
       $container->setParameter('krabo.isotope-packaging-slip-dhl.google_maps_api_key', $config['google_maps_api_key']);
     }
+    if (isset($config['email_pickup_not_available'])) {
+      $container->setParameter('krabo.isotope-packaging-slip-dhl.email_pickup_not_available', $config['email_pickup_not_available']);
+    }
 
 
     $container->setParameter('krabo.isotope-packaging-slip-dhl.shipper_company_name', null);
