@@ -35,6 +35,9 @@ if (!locator) {
     <?php if ($this->googleMapsApiKey) { ?>
     googleMapsApiKey: '<?php echo $this->googleMapsApiKey; ?>',
     <?php } ?>
+    <?php if (!empty($this->selectedServicepointId)) { ?>
+    selectedServicepointId: '<?php echo $this->selectedServicepointId; ?>',
+    <?php } ?>
     language: 'nl',
     country: 'nl',
     header: true,

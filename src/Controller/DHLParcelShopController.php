@@ -38,15 +38,16 @@ class DHLParcelShopController implements ContainerAwareInterface {
   }
 
   /**
-   * @Route("/isotopepackagingslipdhl/selectparcelshop", name="isotopepackagingslipdhl_selectparcelshop")
+   * @Route("/isotopepackagingslipdhl/selectparcelshop/{selectedServicepointId}", name="isotopepackagingslipdhl_selectparcelshop")
    */
-  public function selectParcelShop(): Response
+  public function selectParcelShop(string $selectedServicepointId=''): Response
   {
     System::loadLanguageFile('default');
     $template = new FrontendTemplate('isotopepackagingslipdhl_selectparcellshop');
     if ($this->container->hasParameter('krabo.isotope-packaging-slip-dhl.google_maps_api_key')) {
       $template->googleMapsApiKey = $this->container->getParameter('krabo.isotope-packaging-slip-dhl.google_maps_api_key');
     }
+    $template->selectedServicepointId = $selectedServicepointId;
     return new Response($template->parse());
   }
 
