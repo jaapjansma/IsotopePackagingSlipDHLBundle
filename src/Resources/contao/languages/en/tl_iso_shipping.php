@@ -17,3 +17,4 @@
  */
 
 $GLOBALS['TL_LANG']['MODEL']['tl_iso_shipping']['isopackagingslip_dhl'] = ['Isotope Packaging Slip with DHL', ''];
+$GLOBALS['TL_LANG']['MODEL']['tl_iso_shipping']['isopackagingslip_dhl_parcel_shop'] = ['Isotope Packaging Slip with DHL Parcel Shop', ''];

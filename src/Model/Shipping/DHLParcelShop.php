@@ -16,10 +16,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-$GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup'] = 'DHL Afhaallocatie';
-$GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_message'] = 'Haal uw bestelling op bij een DHL afhaallocatie';
-$GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_select'] = 'Selecteer een afhaal locatie';
-$GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_change'] = 'Wijzig afhaal locatie';
-$GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_clode'] = 'Sluiten';
-$GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_info'] = 'Ophalen bij een DHL afhaalpunt bij jou in de buurt: %s (Alleen in Nederland)';
-$GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_not_available'] = 'DHL Servicepoint niet beschikbaar';
+namespace Krabo\IsotopePackagingSlipDHLBundle\Model\Shipping;
+
+use Isotope\Model\Shipping;
+use Isotope\Model\Shipping\Flat;
+
+class DHLParcelShop extends Flat {
+
+  public static function getParcelShopShippingMethod():? Shipping {
+    $arrColumns[] = "type = 'isopackagingslip_dhl_parcel_shop'";
+    $arrColumns[] = "enabled = '1'";
+    /** @var Shipping[] $objModules */
+    $objModules = Shipping::findBy($arrColumns, NULL);
+    if (NULL !== $objModules) {
+      foreach ($objModules as $objModule) {
+        if (!$objModule->isAvailable()) {
+          continue;
+        }
+        return $objModule;
+      }
+    }
+    return null;
+  }
+
+}
