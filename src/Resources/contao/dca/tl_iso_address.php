@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-$GLOBALS['TL_DCA']['tl_nc_gateway']['palettes']['default'] .= 'dhl_servicepoint_id;';
+$GLOBALS['TL_DCA']['tl_iso_address']['palettes']['default'] .= 'dhl_servicepoint_id;';
 
 $GLOBALS['TL_DCA']['tl_iso_address']['fields']['dhl_servicepoint_id'] = [
   'exclude'               => true,
