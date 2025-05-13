@@ -50,7 +50,7 @@ class CreateParcelCron {
       SELECT `" . $tableName . "`.`id` 
       FROM `" . $tableName . "`
       INNER JOIN `" . $shippingTableName . "` ON `" . $tableName . "`.`shipping_id` = `" . $shippingTableName . "`.`id`
-      WHERE `" . $shippingTableName . "`.`type` = 'isopackagingslip_dhl'
+      WHERE (`" . $shippingTableName . "`.`type` = 'isopackagingslip_dhl' OR `" . $shippingTableName . "`.`type` = 'isopackagingslip_dhl_parcel_shop')
       AND `" . $tableName . "`.`dhl_id` = ''
       AND `" . $tableName . "`.`status` = '" . IsotopePackagingSlipModel::STATUS_SHIPPED . "'
       ORDER BY `id` ASC

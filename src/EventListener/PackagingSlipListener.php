@@ -183,7 +183,7 @@ class PackagingSlipListener implements EventSubscriberInterface {
       return false;
     }
     $shippingMethod = Shipping::findByPk($packagingSlipModel->shipping_id);
-    if (!in_array($shippingMethod->type, ['isopackagingslip_dhl'])) {
+    if (!in_array($shippingMethod->type, ['isopackagingslip_dhl', 'isopackagingslip_dhl_parcel_shop'])) {
       return false;
     }
     $shipper = IsotopePackagingSlipShipperModel::findByPk($packagingSlipModel->shipper_id);
