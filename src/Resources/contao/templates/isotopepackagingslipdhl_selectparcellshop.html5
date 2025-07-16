@@ -8,9 +8,9 @@
 </head>
 <body>
 
+<button id="iso_checkout_dhlpickup_button" onclick="closeParcelShopSelector();" class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-fullWidth"><?php echo $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_clode']; ?></button>
 <div id="locator">
 </div>
-<button id="iso_checkout_dhlpickup_button" onclick="closeParcelShopSelector();" class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-fullWidth"><?php echo $GLOBALS['TL_LANG']['MSC']['shipping_dhl_pickup_clode']; ?></button>
 <script type="text/javascript">
 console.log(window.parent);
 var locator;
