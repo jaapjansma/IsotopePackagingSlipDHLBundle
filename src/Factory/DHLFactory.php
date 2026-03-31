@@ -210,10 +210,11 @@ class DHLFactory implements DHLConnectionFactoryInterface, DHLSenderFactoryInter
    * Creates a parcel in DHL for this Packaging Slip
    *
    * @param \Krabo\IsotopePackagingSlipBundle\Model\IsotopePackagingSlipModel $isotopePackagingSlipModel
+   * @param bool $isPostBox
    *
    * @return void
    */
-  public function createParcel(IsotopePackagingSlipModel $packagingSlip): void {
+  public function createParcel(IsotopePackagingSlipModel $packagingSlip, bool $isPostBox=false): void {
     $weight = $packagingSlip->getTotalWeight();
     $recipient = [
       'first_name' => StringUtil::decodeEntities(Format::dcaValue(IsotopePackagingSlipModel::getTable(), 'firstname', $packagingSlip->firstname)),
@@ -245,7 +246,7 @@ class DHLFactory implements DHLConnectionFactoryInterface, DHLSenderFactoryInter
         // Do nothing
       }
     }
-    $parcel = new Parcel([
+    $parcelSpec = [
       'reference' => $packagingSlip->document_number,
       'recipient' => $recipient,
       'pieces' => [
@@ -257,9 +258,12 @@ class DHLFactory implements DHLConnectionFactoryInterface, DHLSenderFactoryInter
       'options' => [
         'description' => $packagingSlip->document_number,
       ],
-    ]);
+    ];
+    $parcel = new Parcel($parcelSpec);
     if ($packagingSlip->dhl_servicepoint_id) {
       $parcel->servicePoint($packagingSlip->dhl_servicepoint_id);
+    } elseif ($isPostBox) {
+      $parcel->mailboxpackage();
     }
     $parcel->sender = $this->getSender();
     $shipments = new Shipments($this->getClient());

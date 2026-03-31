@@ -32,9 +32,10 @@ interface DHLConnectionFactoryInterface {
    * Creates a parcel in DHL for this Packaging Slip
    *
    * @param \Krabo\IsotopePackagingSlipBundle\Model\IsotopePackagingSlipModel $packagingSlip
+   * @param bool $isPostBox
    *
    * @return void
    */
-  public function createParcel(IsotopePackagingSlipModel $packagingSlip): void;
+  public function createParcel(IsotopePackagingSlipModel $packagingSlip, bool $isPostBox=false): void;
 
 }
