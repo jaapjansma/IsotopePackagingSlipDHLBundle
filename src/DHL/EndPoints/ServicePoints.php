@@ -18,10 +18,10 @@
 
 namespace Krabo\IsotopePackagingSlipDHLBundle\DHL\EndPoints;
 
-use Mvdnbrk\DhlParcel\Endpoints\BaseEndpoint;
-use Mvdnbrk\DhlParcel\Resources\ServicePoint as ServicePointResource;
+use Krabo\IsotopePackagingSlipDHLBundle\DHL\Resources\ServicePoint as ServicePointResource;
+use Tightenco\Collect\Support\Collection;
 
-class ServicePoints extends BaseEndpoint {
+class ServicePoints extends \Mvdnbrk\DhlParcel\Endpoints\ServicePoints {
 
   /**
    * Get a collection of service points.
@@ -36,8 +36,30 @@ class ServicePoints extends BaseEndpoint {
       'GET',
       'parcel-shop-locations/'.$country.'/'.$id,
     );
+    if (is_object($response)) {
+      $response = json_decode(json_encode($response), true);
+    }
 
     return new ServicePointResource($response);
+  }
+
+  public function get(array $filters = []): Collection
+  {
+    $response = $this->performApiCall(
+      'GET',
+      'parcel-shop-locations/'.$this->country.$this->buildQueryString($this->getFilters($filters))
+    );
+
+    $collection = new Collection();
+
+    collect($response)->each(function ($item) use ($collection) {
+      if (is_object($item)) {
+        $item = json_decode(json_encode($item), true);
+      }
+      $collection->push(new ServicePointResource($item));
+    });
+
+    return $collection;
   }
 
 }

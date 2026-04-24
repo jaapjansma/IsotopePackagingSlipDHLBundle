@@ -28,7 +28,6 @@ use Krabo\IsotopePackagingSlipDHLBundle\DHL\Resources\Parcel;
 use Mvdnbrk\DhlParcel\Client;
 use Mvdnbrk\DhlParcel\Endpoints\Shipments;
 use Krabo\IsotopePackagingSlipDHLBundle\DHL\EndPoints\TrackTrace;
-use Mvdnbrk\DhlParcel\Exceptions\DhlParcelException;
 use Mvdnbrk\DhlParcel\Resources\Recipient;
 use Mvdnbrk\DhlParcel\Resources\Shipment;
 
@@ -172,7 +171,7 @@ class DHLFactory implements DHLConnectionFactoryInterface, DHLSenderFactoryInter
    */
   public function getClient(): Client {
     if (!$this->client) {
-      $this->client = new Client();
+      $this->client = new \Krabo\IsotopePackagingSlipDHLBundle\DHL\Client();
       $this->client->setUserId($this->userId);
       $this->client->setApiKey($this->apiKey);
       if ($this->acoountId) {
